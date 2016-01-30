@@ -27,7 +27,12 @@ int main(int argv,char *argc[])
 		sprintf(data,"%d",y);
 		int len=strlen(data); 
 		MD5_Update(&ctx,data,len);
+		
 	}
 	MD5_Final(hash,&ctx);
-	printf("%02x",hash);	
+	for(i=0;i<=0xf;i++)
+	{
+		printf("%02x",hash[i]);
+		
+	}
 }
