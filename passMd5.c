@@ -5,10 +5,26 @@
 #include <time.h>
 #include <stdlib.h>
 
-int64_t main(int argv,char *argc[])
+unsigned int key[64] = {
+  0x000003c8, 0x00000032, 0x000002ce, 0x00000302, 0x0000007f, 
+  0x000001b8, 0x0000037e, 0x00000188, 0x00000349, 0x0000027f, 
+  0x0000005e, 0x00000234, 0x00000354, 0x000001a3, 0x00000096, 
+  0x00000340, 0x00000128, 0x000002fc, 0x00000300, 0x0000028e, 
+  0x00000126, 0x0000001b, 0x0000032a, 0x000002f5, 0x0000015f, 
+  0x00000368, 0x000001eb, 0x00000079, 0x0000011d, 0x0000024e, 
+  0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 
+  0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 
+  0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 
+  0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 
+  0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 
+  0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 
+  0x00000000, 0x00000000, 0x00000000, 0x00000000, };
+
+int main(int argv,char *argc[])
 {
 	int i;
 	unsigned char hash[20];
+	unsigned char answer[64];
 	int m;
 	for(m=0;m<=0xffff;m++)
 	{
@@ -19,7 +35,7 @@ int64_t main(int argv,char *argc[])
 		for(i=0;i<=0x1d;i++)
 		{
 			void *data=(void*)malloc(sizeof(char)*16);
-			int x = rand();
+			int64_t x = rand();
 			
 			int64_t y = x*0x10624dd3; //@ 0x00400b73
 			//emulate imul edx/eax
@@ -33,7 +49,8 @@ int64_t main(int argv,char *argc[])
 			int q=x>>0x1f | signBit; //ditto
 			int k=edx-q;
 			k=k*1000;
-			int g = x - k;
+			unsigned int g = x - k;
+			answer[i]=key[i]^g;
 			sprintf(data,"%d",g);
 			int len = strlen(data); 
 			MD5_Update(&ctx, data, len);
@@ -44,7 +61,11 @@ int64_t main(int argv,char *argc[])
 	for(i=0;i<=0xf;i++)
 	{
 		sprintf((b+i*2),"%02x",hash[i]);
+
 	}
-	printf("%s\n",b);
+	
+	if(!strcmp(b,"5eba99aff105c9ff6a1a913e343fec67"))
+		printf("%s:%s\n",answer, b);
+
 	}
 }
